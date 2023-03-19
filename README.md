@@ -14,6 +14,14 @@ These are not required but recommended. [VSCode](https://code.visualstudio.com/)
 
 ## Installation
 
+Because the project includes training and retraining process, first download the [dataset and model](https://drive.google.com/drive/folders/1xRyO-mf217_pEb30j0b-gmRVbmhoGdtW?usp=sharing) and put them at the position as showing below.
+```bash
+$ pwd
+/Users/username/src/ergosmart-master/server/model/__src
+$ ls
+ErgoSolCap.py	captions	folder		model.pth
+```
+
 Python virtual environment is not required but highly recommended. First, make sure the Python version is at least 3.9
 
 ```bash
@@ -50,14 +58,6 @@ Next, set up the client in the client folder.
 $ pwd
 /Users/username/src/ergosmart-master/client
 $ npm install
-```
-
-Because the project includes training and retraining process, download the [dataset and model](https://drive.google.com/drive/folders/1xRyO-mf217_pEb30j0b-gmRVbmhoGdtW?usp=sharing) and put them at the position as showing below.
-```bash
-$ pwd
-/Users/username/src/ergosmart-master/server/model/__src
-$ ls
-ErgoSolCap.py	captions	folder		model.pth
 ```
 
 ## Usage
