@@ -50,12 +50,14 @@ Next, set up the client in the client folder.
 $ pwd
 /Users/username/src/ergosmart-master/client
 $ npm install
-$ npm run dev
 ```
 
-If you need to compile and minify for production, run the following command.
+Because the project includes training and retraining process, download the [dataset and model](https://drive.google.com/drive/folders/1xRyO-mf217_pEb30j0b-gmRVbmhoGdtW?usp=sharing) and put them at the position as showing below.
 ```bash
-$ npm run build
+$ pwd
+/Users/username/src/ergosmart-master/server/model/__src
+$ ls
+ErgoSolCap.py	captions	folder		model.pth
 ```
 
 ## Usage
@@ -80,6 +82,11 @@ $ npm run dev
 > vite
   VITE v4.1.4  ready in 581 ms
   ...
+```
+
+If you need to compile and minify for production, run the following command.
+```bash
+$ npm run build
 ```
 
 Then, browse to your [localhost](http://localhost:5173/) and start using ErgoSmart!
