@@ -1,0 +1,10 @@
+__pycache__
+
+images/
+*.db
+
+venv/
+env/
+
+model/__src/*
+!model/__src/ErgoSolCap.py
