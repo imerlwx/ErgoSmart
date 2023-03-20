@@ -38,6 +38,7 @@ export default {
 
 <template>
   <header>
+    <span class="title">ErgoSmart</span>
     <div class="profile">
       <!-- svelte-ignore a11y-missing-attribute -->
       <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -65,7 +66,7 @@ header {
   box-sizing: border-box;
   padding: 0 56px;
   display: flex;
-  justify-content: end;
+  justify-content: space-between;
   align-items: center;
 }
 
@@ -93,6 +94,7 @@ a::after {
 .dropdown {
   position: absolute;
   top: 60px;
+  right: 60px;
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 6px;
   background-color: #fff;
@@ -109,5 +111,10 @@ a::after {
 .drop-down-item:hover {
   background-color: #f8f9fa;
   cursor: pointer;
+}
+
+.title {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 25px;
 }
 </style>
