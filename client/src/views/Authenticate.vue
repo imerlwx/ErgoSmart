@@ -56,6 +56,9 @@ export default {
 </script>
 
 <template>
+  <header>
+    <span class="title">ErgoSmart</span>
+  </header>
   <div class="wrapper">
     <form class="login" v-on:submit="handleSubmit">
       <p v-if="isRegister" class="title">Sign up</p>
@@ -87,6 +90,22 @@ export default {
 <style scoped>
 * {
   box-sizing: border-box;
+}
+
+header {
+  width: 100%;
+  height: 70px;
+  background-color: #343a40;
+  box-sizing: border-box;
+  padding: 0 56px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 25px;
 }
 
 .wrapper {
