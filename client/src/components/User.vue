@@ -3,7 +3,7 @@ import { reactive, ref } from 'vue'
 import { submitResult, getTrainResult } from "../service/user";
 import { ElMessageBox } from 'element-plus'
 import { reasonMap } from '../config'
-import { Plus } from '@element-plus/icons-vue'
+import { UploadFilled  } from '@element-plus/icons-vue'
 const formdata = reactive({
     fileList: [],
     satisfied: null,
@@ -63,42 +63,49 @@ function handleSubmit(formEl) {
 
 <template>
     <main>
+        <div>
+            <h1>Welcome!</h1>
+            <h3>Please upload your image below:</h3>
+        </div>
         <el-form ref="formRef" :model="formdata">
             <div class="upload-container">
                 <el-form-item prop="fileList" :rules="[{
                     required: true,
                     message: 'Please upload a picture'
                 }]" class="upload">
-                    <el-upload :show-file-list="false" class="upload-area" :auto-upload="false" :on-change="getResult"
-                        v-model:file-list="formdata.fileList">
+                    <el-upload :show-file-list="false" class="upload-area" :auto-upload="false"
+                    :on-change="getResult" v-model:file-list="formdata.fileList">
+
                         <img v-if="imgSrc" :src="imgSrc" />
                         <!-- <img v-if="imgSrc" :src="imgSrc" />
                                 <div v-else class="upload-placeholder"></div>
                                 <el-button class="upload-button" type="primary">select file</el-button> -->
                         <el-icon v-else class="avatar-uploader-icon">
-                            <Plus />
+                            <p><UploadFilled />Click Here to Upload Your Image</p>
                         </el-icon>
-                        <template #tip>
+                        <!-- <template #tip>
                             <div class="el-upload__tip">
-                                upload a file
+                                upload an image
                             </div>
-                        </template>
+                        </template> -->
                     </el-upload>
                 </el-form-item>
             </div>
             <div class="result">
                 <h1>AI-generated results</h1>
                 <div class="result-box">{{ formdata.result }}</div>
-                <el-form-item prop="satisfied" :rules="[{
-                    required: true,
-                    message: 'Please give a reason'
-                }]">
-                    <el-radio-group v-model="formdata.satisfied">
-                        <el-radio :label="1">Looks good</el-radio>
-                        <el-radio :label="0">I don't like the result</el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <template v-if="formdata.satisfied === 0">
+
+                <div v-if="formdata.result">
+                    <el-form-item prop="satisfied" :rules="[{
+                        required: true,
+                        message: 'Please give a reason'
+                        }]">
+                        <el-radio-group v-model="formdata.satisfied">
+                            <el-radio :label="1">Looks good</el-radio>
+                            <el-radio :label="0">I don't like the result</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <template v-if="formdata.satisfied === 0">
                     <el-form-item prop="feedback">
                         <el-input v-model="formdata.feedback" maxlength="150" placeholder="Give some feedback"
                             show-word-limit type="textarea" />
@@ -112,15 +119,16 @@ function handleSubmit(formEl) {
                             <el-radio label="type-3" size="large">{{ reasonMap['type-3'] }}</el-radio>
                         </el-radio-group>
                     </el-form-item>
-                </template>
-                <h3>Rate the result</h3>
-                <el-form-item prop="rating" :rules="[{
-                    validator: checkRate
-                }]"><el-rate @change="" v-model="formdata.rating"
-                        :texts="['oops', 'disappointed', 'normal', 'good', 'great']" show-text />
-                </el-form-item>
-                <div class="submit">
-                    <el-button type="primary" @click="handleSubmit(formRef)">Submit</el-button>
+                    </template>
+                    <h3>Rate the result</h3>
+                    <el-form-item prop="rating" :rules="[{
+                        validator: checkRate
+                    }]"><el-rate @change="" v-model="formdata.rating"
+                            :texts="['oops', 'disappointed', 'normal', 'good', 'great']" show-text />
+                    </el-form-item>
+                    <div class="submit">
+                        <el-button type="primary" @click="handleSubmit(formRef)">Submit</el-button>
+                    </div>
                 </div>
             </div>
         </el-form>
