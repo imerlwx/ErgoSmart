@@ -121,7 +121,8 @@ def submitUnsatisfiedResult():
         "rating": formdata.get('rating'),
         "reason": formdata.get('reason'),
         "feedback": formdata.get('feedback'),
-        "userId": formdata.get('userId')
+        "userId": formdata.get('userId'),
+        "uploader_id": formdata.get('userId'),
     }
     submitUnSatisfied(data)
     return {"code": 0}

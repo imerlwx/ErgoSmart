@@ -84,9 +84,9 @@ def submitUnSatisfied(data):
     con = sqlite3.connect(database_path)
     cur = con.cursor()
     query = """
-        INSERT INTO nonsas_training (file, result, saved, retrained, rating, reason, feedback) VALUES
-            ('{}', '{}', 0, 0, '{}', '{}', '{}')
-    """.format(data['file'], data['result'], data['rating'], data['reason'], data['feedback'])
+        INSERT INTO nonsas_training (file, result, saved, retrained, rating, reason, feedback, uploader_id) VALUES
+            ('{}', '{}', 0, 0, '{}', '{}', '{}', {})
+    """.format(data['file'], data['result'], data['rating'], data['reason'], data['feedback'], data['userId'])
     cur.execute(query)
     con.commit()
     return True
@@ -101,7 +101,7 @@ def getUserById(id):
     return user
 
 
-def getAllUnsatisfied():
+def getAllUnsatisfied():##from database
     con = sqlite3.connect(database_path)
     cur = con.cursor()
     query = """
