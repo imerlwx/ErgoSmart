@@ -9,8 +9,12 @@ const formdata = reactive({
     satisfied: null,
     reason: '',
     result: "",
+    solution: "",
     feedback: "",
     rating: 0,
+    userChoice: null,
+    maxIndex: null,
+    sortRes: "",
 })
 const imgSrc = ref('')
 const formRef = ref();
@@ -24,7 +28,13 @@ async function getResult(uploadFile) {
     reader.onload = async (re) => {
         imgSrc.value = re.target.result;
         const res = await getTrainResult(f)
-        formdata.result = res.result
+        const prob_ans = res.result
+        const prob = prob_ans.prob
+        const ans = prob_ans.res
+        formdata.result = prob
+        formdata.solution = ans
+        formdata.maxIndex = prob_ans.maxIndex
+        formdata.sortRes = prob_ans.sortRes
     };
     generated.value = true
 }
@@ -42,9 +52,9 @@ function handleSubmit(formEl) {
         if (valid) {
             console.log('submit!')
             const userId = JSON.parse(localStorage.getItem('user')).id
-            const { fileList, reason, feedback, result, satisfied, rating } = formdata
+            const { fileList, reason, feedback, result, satisfied, rating, userChoice, maxIndex } = formdata
             const file = fileList[fileList.length - 1].raw;
-            const res = await submitResult({ file, result, satisfied, rating, reason, feedback, userId })
+            const res = await submitResult({ file, result, satisfied, rating, reason, feedback, userId, userChoice, maxIndex })
             ElMessageBox.alert('Success! Thank you for your feedback', 'Message', {
                 // if you want to disable its autofocus
                 // autofocus: false,
@@ -60,7 +70,18 @@ function handleSubmit(formEl) {
     })
 }
 </script>
-
+<script>
+export default {
+    data() {
+        return {
+            url: ""
+        }
+    },
+    methods: {
+        getURL(urlString) {return urlString.split("@")[1]},
+    },
+};
+</script>
 <template>
     <main>
         <div>
@@ -92,10 +113,24 @@ function handleSubmit(formEl) {
                 </el-form-item>
             </div>
             <div class="result">
-                <h1>AI-generated results</h1>
-                <div class="result-box">{{ formdata.result }}</div>
-
+                <h2 class="loading" v-if="imgSrc && !formdata.result">Generating Results...</h2>
                 <div v-if="formdata.result">
+                    <h1>AI-generated results</h1>
+                    <div class="result-box">{{ formdata.result }}</div>                
+
+                    <h3>Solutions:</h3>
+                    <ol>
+                    <!-- <li v-for="(val, keys) in formdata.solution" :key="keys"> -->
+                    <li v-for="(keys, vals) in formdata.sortRes" :key="keys">
+                        <!-- <p>{{ vals }}</p> -->
+                    <p>{{ keys[0].split("@")[0] }}</p>
+                    <div v-if="getURL(keys[0])">
+                        <a v-bind:href="getURL(keys[0])">Product Link</a>
+                    </div>
+                    
+                    </li>
+                    </ol>
+                    <h3>Are you satisfied with the problem and solutions?</h3>
                     <el-form-item prop="satisfied" :rules="[{
                         required: true,
                         message: 'Please give a reason'
@@ -105,6 +140,20 @@ function handleSubmit(formEl) {
                             <el-radio :label="0">I don't like the result</el-radio>
                         </el-radio-group>
                     </el-form-item>
+                    
+                    <template v-if="formdata.satisfied === 1">
+                        <h3>Which answer do you prefer?</h3>
+                        <el-form-item prop="userChoice" :rules="[{
+                        required: true,
+                        message: 'Please give your top choice'
+                        }]">
+                            <el-radio-group v-model="formdata.userChoice">
+                                <!-- <el-radio v-for="(val, key, index) in Object.values(formdata.solution).sort().reverse()" :label="key">{{ index + 1 }}</el-radio> -->
+                                <el-radio v-for="(key, index) in formdata.sortRes" :label="key[0]">{{ index + 1 }}</el-radio>
+                            </el-radio-group>
+                        </el-form-item>
+                    </template>
+                    
                     <template v-if="formdata.satisfied === 0">
                     <el-form-item prop="feedback">
                         <el-input v-model="formdata.feedback" maxlength="150" placeholder="Give some feedback"
@@ -232,5 +281,9 @@ main form {
 
 .result .Rate {
     height: 40px;
+}
+
+.loading {
+    text-align: center;
 }
 </style>
