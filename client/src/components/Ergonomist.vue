@@ -1,5 +1,5 @@
 <script>
-import { getTrainings, saveTrainingResult, retrain, getRetrainStatus } from "../service/user";
+import { getTrainings, saveTrainingResult, retrain, getRetrainStatus, saveNewSol } from "../service/user";
 import { ElMessage } from "element-plus";
 import { reasonMap } from '../config';
 import jsonSolutions from '../../../file.json';
@@ -9,14 +9,15 @@ export default {
         return {
             trainings: [],
             retrainDisabled: false,
-            solutions: jsonSolutions
+            solutions: jsonSolutions,
+            newSol: ""
         }
     },
     created() {
         this.init()
     },
     methods: {
-        saveResult(t) {
+        saveResult(t, newSol) {
             saveTrainingResult(t.id, t.file, t.result,t.uploader_id).then(res => {
                 if (res.code === 0) {
                     ElMessage({
@@ -24,7 +25,8 @@ export default {
                         message: 'Save successfully',
                     })
                 }
-            })
+            }),
+            saveNewSol(t.prob_id, newSol)
         },
         getReason(type) {
             return reasonMap[type]
@@ -58,12 +60,12 @@ export default {
                         <p>Problem:</p>
                         <el-input type="textarea" resize="none" rows="4" v-model="t.result" :style="{fontSize: '16px'}"></el-input>
                         <p>New Solution:</p>
-                        <el-input type="textarea" resize="none" rows="8" v-model="t.result" :style="{fontSize: '16px'}"></el-input>
+                        <el-input type="textarea" resize="none" rows="8" v-model="newSol" :style="{fontSize: '16px'}"></el-input>
                         <!-- <el-input type="textarea" resize="none" rows="4" v-model="t.result"></el-input> -->
                         <!-- <el-input type="textarea" resize="none" rows="4">{{ solutions }}</el-input> -->
                         <!-- <div v-for="(num, sol) in solutions[t.prob_id]">{{ sol }}</div> -->
                         
-                        <div class="save"><el-button type="info" @click="saveResult(t)">Save</el-button></div>
+                        <div class="save"><el-button type="info" @click="saveResult(t, newSol)">Save</el-button></div>
                     </div>
                     <div>
                         <p>Original Solutions:</p>

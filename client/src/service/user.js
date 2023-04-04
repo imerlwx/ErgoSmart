@@ -85,3 +85,13 @@ export function retrain() {
       .then(resp => resp.json())
       .catch((err) => console.error(err));
 }
+
+export function saveNewSol(prob_id, newSol) {
+   console.log(newSol);
+   return fetch(url + "/newsol", {
+      method: "POST",
+      body: JSON.stringify({prob_id, newSol})
+   })
+      .then(resp => resp.json())
+      .catch((err) => console.error(err));
+}
