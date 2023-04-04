@@ -8,3 +8,6 @@ env/
 
 model/__src/*
 !model/__src/ErgoSolCap.py
+
+# macOS system files
+*.DS_Store
