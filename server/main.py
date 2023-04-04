@@ -7,6 +7,8 @@ from util.send import sendEmail
 from model.main import TrainingModel
 import asyncio
 from util.send import sendEmail
+import json
+import os
 
 
 app = Flask(__name__)
@@ -26,6 +28,21 @@ async def work1():
 
 def getImagePath(fname):
     return './model/__src/Images/' + fname
+
+def getPath(filename):
+    return os.path.join(CUR_DIR, filename)
+
+CUR_DIR = os.path.dirname(__file__)
+
+
+def writeJson(maxIndex, userChoice, filePath):
+    with open(filePath, "r") as f:
+        data = json.load(f)
+
+    data[maxIndex][userChoice] += 1
+    print(data[maxIndex])
+    with open(filePath, "w") as f:
+        json.dump(data, f)
 
 
 @app.post('/login')
@@ -81,6 +98,10 @@ def submitSatisfiedResult():
         "reason": formdata.get('reason'),
         "userId": formdata.get('userId')
     }
+    userChoice = formdata.get('userChoice')
+    maxIndex = formdata.get('maxIndex')
+    DATA_DIR = getPath('../file.json')
+    writeJson(maxIndex, userChoice, filePath=DATA_DIR)
     submitSatisfied(data)
     return {"code": 0}
 
@@ -100,7 +121,8 @@ def submitUnsatisfiedResult():
         "rating": formdata.get('rating'),
         "reason": formdata.get('reason'),
         "feedback": formdata.get('feedback'),
-        "userId": formdata.get('userId')
+        "userId": formdata.get('userId'),
+        "uploader_id": formdata.get('userId'),
     }
     submitUnSatisfied(data)
     return {"code": 0}
