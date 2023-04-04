@@ -1,12 +1,15 @@
 <script>
 import { getTrainings, saveTrainingResult, retrain, getRetrainStatus } from "../service/user";
 import { ElMessage } from "element-plus";
-import { reasonMap } from '../config'
+import { reasonMap } from '../config';
+import jsonSolutions from '../../../file.json';
+
 export default {
     data() {
         return {
             trainings: [],
-            retrainDisabled: false
+            retrainDisabled: false,
+            solutions: jsonSolutions
         }
     },
     created() {
@@ -52,22 +55,42 @@ export default {
                 <div class="list-item">
                     <div><img :src="'images/' + t.file" alt="" /></div>
                     <div class="result">
-                        <el-input type="textarea" resize="none" rows="12" v-model="t.result"></el-input>
+                        <p>Problem:</p>
+                        <el-input type="textarea" resize="none" rows="4" v-model="t.result" :style="{fontSize: '16px'}"></el-input>
+                        <p>New Solution:</p>
+                        <el-input type="textarea" resize="none" rows="8" v-model="t.result" :style="{fontSize: '16px'}"></el-input>
+                        <!-- <el-input type="textarea" resize="none" rows="4" v-model="t.result"></el-input> -->
+                        <!-- <el-input type="textarea" resize="none" rows="4">{{ solutions }}</el-input> -->
+                        <!-- <div v-for="(num, sol) in solutions[t.prob_id]">{{ sol }}</div> -->
+                        
                         <div class="save"><el-button type="info" @click="saveResult(t)">Save</el-button></div>
                     </div>
-                    <el-card class="feedback">
-                        <p>
-                            <el-radio :checked="true">
-                                {{ getReason(t.reason) }}</el-radio>
-                        </p>
-                        <div>
-                            Other feedback:
-                        </div>
-                        <p class="other-feedback">
-                            {{ t.feedback }}
-                        </p>
-                        <div class="rating">Rating: <el-rate disabled :model-value="t.rating" show-score /></div>
-                    </el-card>
+                    <div>
+                        <p>Original Solutions:</p>
+                        <el-card class="scrollable">
+                            <ol>
+                                <li v-for="(num, sol) in solutions[t.prob_id]" :key="sol">
+                                    <p>{{ sol.split("@")[0] }}</p>
+                                </li>
+                            </ol>
+                        </el-card>
+                        <br>
+                        <p>User Feedback:</p>
+                        <el-card class="feedback">
+                            <p>
+                                <el-radio :checked="true">
+                                    {{ getReason(t.reason) }}</el-radio>
+                            </p>
+                            <div>
+                                Other feedback:
+                            </div>
+                            <p class="other-feedback">
+                                {{ t.feedback }}
+                            </p>
+                            <div class="rating">Rating: <el-rate disabled :model-value="t.rating" show-score /></div>
+                        </el-card>
+                    </div>
+                    
                 </div>
                 <el-divider />
             </li>
@@ -102,7 +125,7 @@ ul {
 .list-item {
     display: flex;
     justify-content: space-between;
-    height: 300px;
+    height: 400px;
 }
 
 .list-item>* {
@@ -127,7 +150,7 @@ ul {
 
 .feedback {
     width: 100%;
-    height: 100%;
+    height: 170px;
     border-radius: 5px;
     box-sizing: border-box;
     line-height: 1.5;
@@ -154,5 +177,10 @@ ul {
 
 .retrain-button-wrapper {
     display: inline-block;
+}
+
+.scrollable {
+    height: 170px;
+    overflow: auto;
 }
 </style>

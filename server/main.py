@@ -123,6 +123,7 @@ def submitUnsatisfiedResult():
         "feedback": formdata.get('feedback'),
         "userId": formdata.get('userId'),
         "uploader_id": formdata.get('userId'),
+        "prob_id": formdata.get('maxIndex')
     }
     submitUnSatisfied(data)
     return {"code": 0}

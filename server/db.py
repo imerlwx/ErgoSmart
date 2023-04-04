@@ -34,6 +34,7 @@ def db_init():
             reason,
             feedback,
             uploader_id INTEGER NOT NULL,
+            prob_id varchar(5),
             FOREIGN KEY (uploader_id) REFERENCES user (id)
             );
         """
@@ -84,9 +85,9 @@ def submitUnSatisfied(data):
     con = sqlite3.connect(database_path)
     cur = con.cursor()
     query = """
-        INSERT INTO nonsas_training (file, result, saved, retrained, rating, reason, feedback, uploader_id) VALUES
-            ('{}', '{}', 0, 0, '{}', '{}', '{}', {})
-    """.format(data['file'], data['result'], data['rating'], data['reason'], data['feedback'], data['userId'])
+        INSERT INTO nonsas_training (file, result, saved, retrained, rating, reason, feedback, uploader_id, prob_id) VALUES
+            ('{}', '{}', 0, 0, '{}', '{}', '{}', {}, '{}')
+    """.format(data['file'], data['result'], data['rating'], data['reason'], data['feedback'], data['userId'], data['prob_id'])
     cur.execute(query)
     con.commit()
     return True
