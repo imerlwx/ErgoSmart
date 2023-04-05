@@ -117,7 +117,7 @@ export default {
                 <div v-if="formdata.result">
                     <h1>AI-generated results</h1>
                     <div class="result-box">{{ formdata.result }}</div>                
-
+                    <br>
                     <h3>Solutions:</h3>
                     <ol>
                     <!-- <li v-for="(val, keys) in formdata.solution" :key="keys"> -->
@@ -270,7 +270,7 @@ main form {
 
 .result-box {
     width: 100%;
-    height: 200px;
+    height: 80px;
     /* margin-top: 24px; */
     border: 1px solid black;
     box-sizing: border-box;
