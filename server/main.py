@@ -42,14 +42,17 @@ def writeJson(maxIndex, userChoice, filePath):
     data[maxIndex][userChoice] += 1
     with open(filePath, "w") as f:
         json.dump(data, f)
+    f.close()
 
 def writeNewSol(prob_id, new_sol, filePath):
     with open(filePath, "r") as f:
         data = json.load(f)
+    if new_sol not in data[prob_id]:
+        data[prob_id][new_sol] = 0
+        with open(filePath, "w") as f:
+            json.dump(data, f)
+    f.close()
 
-    data[prob_id][new_sol] = 0
-    with open(filePath, "w") as f:
-        json.dump(data, f)
 
 @app.post('/login')
 def login():
@@ -138,7 +141,8 @@ def submitUnsatisfiedResult():
 def submitNewSol():
     data = request.get_json()
     DATA_DIR = getPath('../file.json')
-    writeNewSol(data.prob_id, data.newSol, DATA_DIR)
+    writeNewSol(data["prob_id"], data["newSol"], DATA_DIR)
+    return {"code": 0}
 
 
 @app.get('/training')

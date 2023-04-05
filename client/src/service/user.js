@@ -87,10 +87,12 @@ export function retrain() {
 }
 
 export function saveNewSol(prob_id, newSol) {
-   console.log(newSol);
    return fetch(url + "/newsol", {
       method: "POST",
-      body: JSON.stringify({prob_id, newSol})
+      body: JSON.stringify({"prob_id": prob_id, "newSol": newSol}),
+      headers: {
+         "Content-Type": "application/json"
+      },
    })
       .then(resp => resp.json())
       .catch((err) => console.error(err));
