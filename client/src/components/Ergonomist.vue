@@ -10,7 +10,7 @@ export default {
             trainings: [],
             retrainDisabled: false,
             solutions: jsonSolutions,
-            newSol: ""
+            newSol: {}
         }
     },
     created() {
@@ -25,8 +25,8 @@ export default {
                         message: 'Save successfully',
                     })
                 }
-            }),
-            saveNewSol(t.prob_id, newSol)
+            });
+            saveNewSol(t.prob_id, newSol[t.id]);
         },
         getReason(type) {
             return reasonMap[type]
@@ -60,7 +60,7 @@ export default {
                         <p>Problem:</p>
                         <el-input type="textarea" resize="none" rows="4" v-model="t.result" :style="{fontSize: '16px'}"></el-input>
                         <p>New Solution:</p>
-                        <el-input type="textarea" resize="none" rows="8" v-model="newSol" :style="{fontSize: '16px'}"></el-input>
+                        <el-input type="textarea" resize="none" rows="8" v-model="newSol[t.id]" :style="{fontSize: '16px'}"></el-input>
                         <!-- <el-input type="textarea" resize="none" rows="4" v-model="t.result"></el-input> -->
                         <!-- <el-input type="textarea" resize="none" rows="4">{{ solutions }}</el-input> -->
                         <!-- <div v-for="(num, sol) in solutions[t.prob_id]">{{ sol }}</div> -->
