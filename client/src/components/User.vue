@@ -3,7 +3,9 @@ import { reactive, ref } from 'vue'
 import { submitResult, getTrainResult } from "../service/user";
 import { ElMessageBox } from 'element-plus'
 import { reasonMap } from '../config'
-import { UploadFilled  } from '@element-plus/icons-vue'
+import { UploadFilled } from '@element-plus/icons-vue'
+import { Camera } from './Camera.vue';
+
 const formdata = reactive({
     fileList: [],
     satisfied: null,
@@ -78,14 +80,24 @@ export default {
         }
     },
     methods: {
-        getURL(urlString) {return urlString.split("@")[1]},
+        getURL(urlString) { return urlString.split("@")[1] },
     },
+    // components: {
+    //     Camera
+    // }
 };
 </script>
 <template>
     <main>
         <div>
             <h1>Welcome!</h1>
+            <h2>
+                Instructions:
+                The ErgoSmart Model could detect ergonomic problems in your image and provide several solutions.
+                The problem and corresponding solutions will be shown on the right.
+                You could choose your favorite solution. That will help us improve the ErgoSmart Model!
+                If you are not satisfied with our results, please let us know and we will give you a new one.
+            </h2>
             <h3>Please upload your image below:</h3>
         </div>
         <el-form ref="formRef" :model="formdata">
@@ -94,21 +106,23 @@ export default {
                     required: true,
                     message: 'Please upload a picture'
                 }]" class="upload">
-                    <el-upload :show-file-list="false" class="upload-area" :auto-upload="false"
-                    :on-change="getResult" v-model:file-list="formdata.fileList">
+                    <el-upload :show-file-list="false" class="upload-area" :auto-upload="false" :on-change="getResult"
+                        v-model:file-list="formdata.fileList">
 
                         <img v-if="imgSrc" :src="imgSrc" />
                         <!-- <img v-if="imgSrc" :src="imgSrc" />
-                                <div v-else class="upload-placeholder"></div>
-                                <el-button class="upload-button" type="primary">select file</el-button> -->
+                                                                            <div v-else class="upload-placeholder"></div>
+                                                                            <el-button class="upload-button" type="primary">select file</el-button> -->
                         <el-icon v-else class="avatar-uploader-icon">
-                            <p><UploadFilled />Click Here to Upload Your Image</p>
+                            <p>
+                                <UploadFilled />Click Here to Upload Your Image
+                            </p>
                         </el-icon>
                         <!-- <template #tip>
-                            <div class="el-upload__tip">
-                                upload an image
-                            </div>
-                        </template> -->
+                                                                        <div class="el-upload__tip">
+                                                                            upload an image
+                                                                        </div>
+                                                                    </template> -->
                     </el-upload>
                 </el-form-item>
             </div>
@@ -116,58 +130,59 @@ export default {
                 <h2 class="loading" v-if="imgSrc && !formdata.result">Generating Results...</h2>
                 <div v-if="formdata.result">
                     <h1>AI-generated results</h1>
-                    <div class="result-box">{{ formdata.result }}</div>                
+                    <div class="result-box">{{ formdata.result }}</div>
                     <br>
                     <h3>Solutions:</h3>
                     <ol>
-                    <!-- <li v-for="(val, keys) in formdata.solution" :key="keys"> -->
-                    <li v-for="(keys, vals) in formdata.sortRes" :key="keys">
-                        <!-- <p>{{ vals }}</p> -->
-                    <p>{{ keys[0].split("@")[0] }}</p>
-                    <div v-if="getURL(keys[0])">
-                        <a v-bind:href="getURL(keys[0])">Product Link</a>
-                    </div>
-                    
-                    </li>
+                        <!-- <li v-for="(val, keys) in formdata.solution" :key="keys"> -->
+                        <li v-for="(keys, vals) in formdata.sortRes" :key="keys">
+                            <!-- <p>{{ vals }}</p> -->
+                            <p>{{ keys[0].split("@")[0] }}</p>
+                            <div v-if="getURL(keys[0])">
+                                <a v-bind:href="getURL(keys[0])">Product Link</a>
+                            </div>
+
+                        </li>
                     </ol>
                     <h3>Are you satisfied with the problem and solutions?</h3>
                     <el-form-item prop="satisfied" :rules="[{
                         required: true,
                         message: 'Please give a reason'
-                        }]">
+                    }]">
                         <el-radio-group v-model="formdata.satisfied">
                             <el-radio :label="1">Looks good</el-radio>
                             <el-radio :label="0">I don't like the result</el-radio>
                         </el-radio-group>
                     </el-form-item>
-                    
+
                     <template v-if="formdata.satisfied === 1">
                         <h3>Which answer do you prefer?</h3>
                         <el-form-item prop="userChoice" :rules="[{
-                        required: true,
-                        message: 'Please give your top choice'
+                            required: true,
+                            message: 'Please give your top choice'
                         }]">
                             <el-radio-group v-model="formdata.userChoice">
                                 <!-- <el-radio v-for="(val, key, index) in Object.values(formdata.solution).sort().reverse()" :label="key">{{ index + 1 }}</el-radio> -->
-                                <el-radio v-for="(key, index) in formdata.sortRes" :label="key[0]">{{ index + 1 }}</el-radio>
+                                <el-radio v-for="(key, index) in formdata.sortRes" :label="key[0]">{{ index + 1
+                                }}</el-radio>
                             </el-radio-group>
                         </el-form-item>
                     </template>
-                    
+
                     <template v-if="formdata.satisfied === 0">
-                    <el-form-item prop="feedback">
-                        <el-input v-model="formdata.feedback" maxlength="150" placeholder="Give some feedback"
-                            show-word-limit type="textarea" />
-                    </el-form-item>
-                    <el-form-item class="reason" prop="reason" :rules="[{
-                        required: true,
-                        message: 'Please select one of the reasons'
-                    }]"><el-radio-group v-model="formdata.reason" class="ml-4">
-                            <el-radio label="type-1" size="large">{{ reasonMap['type-1'] }}</el-radio>
-                            <el-radio label="type-2" size="large">{{ reasonMap['type-2'] }}</el-radio>
-                            <el-radio label="type-3" size="large">{{ reasonMap['type-3'] }}</el-radio>
-                        </el-radio-group>
-                    </el-form-item>
+                        <el-form-item prop="feedback">
+                            <el-input v-model="formdata.feedback" maxlength="150" placeholder="Give some feedback"
+                                show-word-limit type="textarea" />
+                        </el-form-item>
+                        <el-form-item class="reason" prop="reason" :rules="[{
+                            required: true,
+                            message: 'Please select one of the reasons'
+                        }]"><el-radio-group v-model="formdata.reason" class="ml-4">
+                                <el-radio label="type-1" size="large">{{ reasonMap['type-1'] }}</el-radio>
+                                <el-radio label="type-2" size="large">{{ reasonMap['type-2'] }}</el-radio>
+                                <el-radio label="type-3" size="large">{{ reasonMap['type-3'] }}</el-radio>
+                            </el-radio-group>
+                        </el-form-item>
                     </template>
                     <h3>Rate the result</h3>
                     <el-form-item prop="rating" :rules="[{
@@ -233,6 +248,7 @@ main form {
     overflow: hidden;
     transition: var(--el-transition-duration-fast);
 }
+
 .el-icon.avatar-uploader-icon:hover {
     border-color: var(--el-color-primary);
 }
