@@ -4,7 +4,7 @@ import { submitResult, getTrainResult } from "../service/user";
 import { ElMessageBox } from 'element-plus'
 import { reasonMap } from '../config'
 import { UploadFilled } from '@element-plus/icons-vue'
-import { Camera } from './Camera.vue';
+import Camera from './Camera.vue'
 
 const formdata = reactive({
     fileList: [],
@@ -17,6 +17,8 @@ const formdata = reactive({
     userChoice: null,
     maxIndex: null,
     sortRes: "",
+    // camera: null,
+    // dtURL:null,
 })
 const imgSrc = ref('')
 const formRef = ref();
@@ -76,31 +78,67 @@ function handleSubmit(formEl) {
 export default {
     data() {
         return {
-            url: ""
+            url: "",
+            // dtURL: "",
         }
     },
-    methods: {
-        getURL(urlString) { return urlString.split("@")[1] },
+    components: {
+        Camera
     },
-    // components: {
-    //     Camera
-    // }
+    methods: {
+        getDTURL() {
+            const dtURL = localStorage.getItem('dtURL')
+            return dtURL
+        }
+    }
+    // mounted() {
+    //     // setTimeout(() => {
+	// 	// 		this.$nextTick(() => {
+	// 	// 			console.log(this.$refs.camera.dataURL);
+    //     //             this.dtURL = this.$refs.camera.dataURL
+	// 	// 		})
+	// 	// 	}, 100);
+    //     console.log(this.$refs.camera.dataURL);
+    //     formdata.dtURL = this.$refs.camera.dataURL
+        
+    // },
 };
 </script>
 <template>
     <main>
+        <div >
+                    <Camera ref="camera"/>
+                    <button :on-click="getResult" v-model:file-list="formdata.fileList">
+
+                    </button>
+                    <p>{{ getDTURL() }}</p>
+                </div>
         <div>
             <h1>Welcome!</h1>
-            <h2>
-                Instructions:
-                The ErgoSmart Model could detect ergonomic problems in your image and provide several solutions.
-                The problem and corresponding solutions will be shown on the right.
-                You could choose your favorite solution. That will help us improve the ErgoSmart Model!
-                If you are not satisfied with our results, please let us know and we will give you a new one.
-            </h2>
+            <el-card>
+                <h3>Instructions:</h3>
+                
+                <ul>
+                    <li>The ErgoSmart Model could detect ergonomic problems in your image and provide several solutions.</li>
+                    <li>The problem and corresponding solutions will be shown on the right.</li>
+                    <li>You could choose your favorite solution. That will help us improve the ErgoSmart Model!</li>
+                    <li>If you are not satisfied with our results, please let us know and we will give you a new one.</li>
+                </ul>
+                
+            </el-card>
+            
+            <br>
             <h3>Please upload your image below:</h3>
         </div>
+        <el-radio-group v-model="formdata.camera">
+                            <el-radio :label="1">Take a photo</el-radio>
+                            <el-radio :label="0">Upload an image</el-radio>
+        </el-radio-group>
+        
         <el-form ref="formRef" :model="formdata">
+            <template v-if="formdata.camera === 0">
+        
+            
             <div class="upload-container">
                 <el-form-item prop="fileList" :rules="[{
                     required: true,
@@ -108,24 +146,21 @@ export default {
                 }]" class="upload">
                     <el-upload :show-file-list="false" class="upload-area" :auto-upload="false" :on-change="getResult"
                         v-model:file-list="formdata.fileList">
-
+                        <p>{{ formdata.fileList }}</p>
                         <img v-if="imgSrc" :src="imgSrc" />
-                        <!-- <img v-if="imgSrc" :src="imgSrc" />
-                                                                            <div v-else class="upload-placeholder"></div>
-                                                                            <el-button class="upload-button" type="primary">select file</el-button> -->
                         <el-icon v-else class="avatar-uploader-icon">
                             <p>
                                 <UploadFilled />Click Here to Upload Your Image
                             </p>
                         </el-icon>
-                        <!-- <template #tip>
-                                                                        <div class="el-upload__tip">
-                                                                            upload an image
-                                                                        </div>
-                                                                    </template> -->
                     </el-upload>
                 </el-form-item>
             </div>
+            </template>
+            <template v-if="formdata.camera === 1">
+                
+            </template>
+
             <div class="result">
                 <h2 class="loading" v-if="imgSrc && !formdata.result">Generating Results...</h2>
                 <div v-if="formdata.result">

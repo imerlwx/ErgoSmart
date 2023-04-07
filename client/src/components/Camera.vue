@@ -1,43 +1,105 @@
-<script>
-export default {
-    data() {
-        return {
-            mediaStream: null,
-            imageCapture: null,
-        };
-    },
-    mounted() {
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => {
-                this.mediaStream = stream;
-                this.$refs.video.srcObject = stream;
-                this.$refs.video.play();
-                const track = stream.getVideoTracks()[0];
-                this.imageCapture = new ImageCapture(track);
-            })
-            .catch(err => {
-                console.error(`Failed to access camera: ${err}`);
-            });
-    },
-    beforeDestroy() {
-        this.mediaStream.getTracks().forEach(track => {
-            track.stop();
-        });
-    },
-    methods: {
-        async takePhoto() {
-            const blob = await this.imageCapture.takePhoto();
-            // Do something with the captured photo blob, e.g. display it
-            // console.log(blob);
-            return blob;
-        },
-    },
-}
-</script>
+<!-- 
 
 <template>
     <div>
-        <video id="camera-stream" ref="video"></video>
-        <button @click="takePhoto">Take Photo</button>
+      <video ref="video" width="640" height="480"></video>
+      <button @click="takePhoto">Take Photo</button>
+      <canvas ref="canvas" width="640" height="480"></canvas>
     </div>
-</template>
+  </template>
+  
+  <script>
+  export default {
+    data() {
+      return {
+        stream: null,
+        photoDataUrl: null
+      }
+    },
+    mounted() {
+      this.startCamera();
+    },
+    methods: {
+      async startCamera() {
+        try {
+          this.stream = await navigator.mediaDevices.getUserMedia({video: true});
+          this.$refs.video.srcObject = this.stream;
+          this.$refs.video.play();
+          
+        } catch (error) {
+          console.log(error);
+        }
+      },
+      takePhoto() {
+        const context = this.$refs.canvas.getContext('2d');
+        context.drawImage(this.$refs.video, 0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
+        this.photoDataUrl = this.$refs.canvas.toDataURL('image/jpeg');
+      }
+    },
+    beforeDestroy() {
+      if (this.stream) {
+        this.stream.getTracks().forEach(function (track) {
+          track.stop();
+        });
+      }
+    }
+  }
+  </script>
+   -->
+
+   <template>
+    <div>
+      <video v-if="photoTaken === false" ref="video" autoplay></video>
+      <button  @click="capture">Capture</button>
+      <canvas ref="canvas"></canvas>
+    </div>
+  </template>
+  
+  <script>
+  
+  export default {
+    name: "Camera",
+    data() {
+      return {
+        mediaStream: null,
+        photoTaken: false,
+        dataURL: null,
+      }
+    },
+    mounted() {
+      // Request access to the camera
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+          // Set the mediaStream to the camera stream
+          this.mediaStream = stream;
+          // Set the video source to the camera stream
+          this.$refs.video.srcObject = stream;
+        })
+        .catch(err => {
+          console.log("Unable to access camera", err);
+        });
+    },
+    methods: {
+      capture() {
+        // Set photoTaken to true to show the captured photo
+        this.photoTaken = true;
+        // Pause the video stream
+        this.$refs.video.pause();
+        // Get the canvas element
+        const canvas = this.$refs.canvas;
+        // Set the canvas dimensions to match the video dimensions
+        canvas.width = this.$refs.video.videoWidth;
+        canvas.height = this.$refs.video.videoHeight;
+        // Draw the video frame onto the canvas
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(this.$refs.video, 0, 0, canvas.width, canvas.height);
+        // Stop the camera stream
+        this.mediaStream.getTracks()[0].stop();
+        this.dataURL = canvas.toDataURL();
+        localStorage.setItem('dtURL', this.dataURL);
+      }
+    }
+  }
+
+  </script>
+  
