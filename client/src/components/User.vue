@@ -175,6 +175,8 @@ export default {
                     <li>The ErgoSmart Model could detect ergonomic problems in your image and provide several solutions.
                     </li>
                     <li>The problem and corresponding solutions will be shown on the right.</li>
+                    <li>You can recapture the photo by clicking the "Capture" button.</li>
+                    <li>You can reupload an image by clicking the existing image.</li>
                     <li>You could choose your favorite solution. That will help us improve the ErgoSmart Model!</li>
                     <li>If you are not satisfied with our results, please let us know and we will give you a new one.</li>
                 </ul>

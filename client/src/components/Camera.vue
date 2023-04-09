@@ -1,58 +1,13 @@
-<!-- 
-
-<template>
-    <div>
-      <video ref="video" width="640" height="480"></video>
-      <button @click="takePhoto">Take Photo</button>
-      <canvas ref="canvas" width="640" height="480"></canvas>
-    </div>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        stream: null,
-        photoDataUrl: null
-      }
-    },
-    mounted() {
-      this.startCamera();
-    },
-    methods: {
-      async startCamera() {
-        try {
-          this.stream = await navigator.mediaDevices.getUserMedia({video: true});
-          this.$refs.video.srcObject = this.stream;
-          this.$refs.video.play();
-          
-        } catch (error) {
-          console.log(error);
-        }
-      },
-      takePhoto() {
-        const context = this.$refs.canvas.getContext('2d');
-        context.drawImage(this.$refs.video, 0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
-        this.photoDataUrl = this.$refs.canvas.toDataURL('image/jpeg');
-      }
-    },
-    beforeDestroy() {
-      if (this.stream) {
-        this.stream.getTracks().forEach(function (track) {
-          track.stop();
-        });
-      }
-    }
-  }
-  </script>
-   -->
-
 <template>
   <div class="camera-container">
-    <video width="480" height="360" v-if="photoTaken === false" ref="video" autoplay></video>
-    <canvas width="0" height="0" ref="canvas"></canvas>
+    <video width="480" height="360" ref="video" autoplay></video>
     <br>
     <el-button type="primary" @click="capture">Capture</el-button>
+    <br>
+    <canvas width="0" height="0" ref="canvas"></canvas>
+
+    
+    <!-- <el-button type="primary" @click="recapture">Recapture</el-button> -->
   </div>
 </template>
 
@@ -89,7 +44,7 @@ export default {
       // Set photoTaken to true to show the captured photo
       this.photoTaken = true;
       // Pause the video stream
-      this.$refs.video.pause();
+      // this.$refs.video.pause();
       // Get the canvas element
       const canvas = this.$refs.canvas;
       // Set the canvas dimensions to match the video dimensions
@@ -101,13 +56,16 @@ export default {
       const ctx = canvas.getContext("2d");
       ctx.drawImage(this.$refs.video, 0, 0, canvas.width, canvas.height);
       // Stop the camera stream
-      this.mediaStream.getTracks()[0].stop();
+      // this.mediaStream.getTracks()[0].stop();
       this.dataURL = canvas.toDataURL();
       localStorage.setItem('dataURL', this.dataURL);
       this.isCaptured = true;
       this.$emit('eventname', this.isCaptured)
 
-    }
+    },
+    // recapture() {
+    //   this.photoTaken = false;
+    // }
   }
 }
 
