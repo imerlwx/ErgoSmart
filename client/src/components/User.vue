@@ -45,12 +45,12 @@ async function getResult(uploadFile) {
 function dataURLtoBlob(dataurl) {
     var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
         bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-    while(n--){
+    while (n--) {
         u8arr[n] = bstr.charCodeAt(n);
     }
-    return new Blob([u8arr], {type:mime});
+    return new Blob([u8arr], { type: mime });
 }
-async function getImage () {
+async function getImage() {
     const reader = new FileReader();
     const f = dataURLtoBlob(localStorage.getItem('dataURL'));
     reader.readAsDataURL(f);
@@ -88,7 +88,7 @@ function handleSubmit(formEl) {
             } else {
                 file = fileList[fileList.length - 1].raw;
             }
-            
+
             const res = await submitResult({ file, result, satisfied, rating, reason, feedback, userId, userChoice, maxIndex })
             ElMessageBox.alert('Success! Thank you for your feedback', 'Message', {
                 // if you want to disable its autofocus
@@ -124,12 +124,12 @@ export default {
         dataURLtoBlob(dataurl) {
             var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
                 bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-            while(n--){
+            while (n--) {
                 u8arr[n] = bstr.charCodeAt(n);
             }
-            return new Blob([u8arr], {type:mime});
+            return new Blob([u8arr], { type: mime });
         },
-        getImage () {
+        getImage() {
             const reader = new FileReader();
             const f = dataURLtoBlob(localStorage.getItem('dataURL'));
             reader.readAsDataURL(f);
@@ -152,70 +152,71 @@ export default {
     }
     // mounted() {
     //     // setTimeout(() => {
-	// 	// 		this.$nextTick(() => {
-	// 	// 			console.log(this.$refs.camera.dataURL);
+    // 	// 		this.$nextTick(() => {
+    // 	// 			console.log(this.$refs.camera.dataURL);
     //     //             this.dtURL = this.$refs.camera.dataURL
-	// 	// 		})
-	// 	// 	}, 100);
+    // 	// 		})
+    // 	// 	}, 100);
     //     console.log(this.$refs.camera.dataURL);
     //     formdata.dtURL = this.$refs.camera.dataURL
-        
+
     // },
 };
 </script>
 <template>
     <main>
-        
+
         <div>
             <h1>Welcome!</h1>
             <el-card>
                 <h3>Instructions:</h3>
-                
+
                 <ul>
-                    <li>The ErgoSmart Model could detect ergonomic problems in your image and provide several solutions.</li>
+                    <li>The ErgoSmart Model could detect ergonomic problems in your image and provide several solutions.
+                    </li>
                     <li>The problem and corresponding solutions will be shown on the right.</li>
                     <li>You could choose your favorite solution. That will help us improve the ErgoSmart Model!</li>
                     <li>If you are not satisfied with our results, please let us know and we will give you a new one.</li>
                 </ul>
-                
+
             </el-card>
-            
+
             <br>
             <h3>Please upload your image below:</h3>
         </div>
         <el-radio-group v-model="formdata.camera">
-                            <el-radio :label="1">Take a photo</el-radio>
-                            <el-radio :label="0">Upload an image</el-radio>
+            <el-radio :label="1">Take a photo</el-radio>
+            <el-radio :label="0">Upload an image</el-radio>
         </el-radio-group>
-        
+
         <el-form ref="formRef" :model="formdata">
             <template v-if="formdata.camera === 1">
                 <div class="camera">
-                    <Camera ref="camera" @eventname="updateparent"/>
+                    <Camera ref="camera" @eventname="updateparent" />
                     <br>
                     <el-button v-if="this.isCaptured" type="primary" @click="getImage"> Use this image</el-button>
                 </div>
             </template>
             <template v-if="formdata.camera === 0">
 
-            <div class="upload-container">
-                <el-form-item prop="fileList" :rules="[{
-                    required: true,
-                    message: 'Please upload a picture'
-                }]" class="upload">
-                    <el-upload :show-file-list="false" class="upload-area" :auto-upload="false" :on-change="getResult"
-                        v-model:file-list="formdata.fileList">
-                        <img v-if="imgSrc" :src="imgSrc" />
-                        <el-icon v-else class="avatar-uploader-icon">
-                            <p>
-                                <UploadFilled />Click Here to Upload Your Image
-                            </p>
-                        </el-icon>
-                    </el-upload>
-                </el-form-item>
-            </div>
+                <div class="upload-container">
+                    <el-form-item prop="fileList" :rules="[{
+                        required: true,
+                        message: 'Please upload a picture'
+                    }]" class="upload">
+                        <el-upload :show-file-list="false" class="upload-area" :auto-upload="false" :on-change="getResult"
+                            v-model:file-list="formdata.fileList">
+                            <img v-if="imgSrc" :src="imgSrc" />
+                            <el-icon v-else class="avatar-uploader-icon">
+                                <p>
+                                    <UploadFilled />Click Here to Upload Your Image
+                                </p>
+                            </el-icon>
+                        </el-upload>
+                    </el-form-item>
+                </div>
             </template>
-            
+
 
             <div class="result">
                 <h2 class="loading" v-if="imgSrc && !formdata.result">Generating Results...</h2>

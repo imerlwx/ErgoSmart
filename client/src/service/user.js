@@ -89,7 +89,7 @@ export function retrain() {
 export function saveNewSol(prob_id, newSol) {
    return fetch(url + "/newsol", {
       method: "POST",
-      body: JSON.stringify({"prob_id": prob_id, "newSol": newSol}),
+      body: JSON.stringify({ "prob_id": prob_id, "newSol": newSol }),
       headers: {
          "Content-Type": "application/json"
       },
