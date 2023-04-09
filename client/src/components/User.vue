@@ -51,7 +51,6 @@ function dataURLtoBlob(dataurl) {
     return new Blob([u8arr], {type:mime});
 }
 async function getImage () {
-    console.log("aaaa")
     const reader = new FileReader();
     const f = dataURLtoBlob(localStorage.getItem('dataURL'));
     reader.readAsDataURL(f);
@@ -83,7 +82,13 @@ function handleSubmit(formEl) {
             console.log('submit!')
             const userId = JSON.parse(localStorage.getItem('user')).id
             const { fileList, reason, feedback, result, satisfied, rating, userChoice, maxIndex } = formdata
-            const file = fileList[fileList.length - 1].raw;
+            let file = null;
+            if (formdata.camera === 1) {
+                file = dataURLtoBlob(localStorage.getItem('dataURL'));
+            } else {
+                file = fileList[fileList.length - 1].raw;
+            }
+            
             const res = await submitResult({ file, result, satisfied, rating, reason, feedback, userId, userChoice, maxIndex })
             ElMessageBox.alert('Success! Thank you for your feedback', 'Message', {
                 // if you want to disable its autofocus
@@ -107,6 +112,7 @@ export default {
     data() {
         return {
             url: "",
+            isCaptured: false,
             // dtURL: "",
         }
     },
@@ -114,10 +120,6 @@ export default {
         Camera
     },
     methods: {
-        getDTURL() {
-            const dtURL = localStorage.getItem('dtURL')
-            return dtURL
-        },
         getURL(urlString) { return urlString.split("@")[1] },
         dataURLtoBlob(dataurl) {
             var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
@@ -143,6 +145,9 @@ export default {
                 formdata.sortRes = prob_ans.sortRes
             };
             generated.value = true
+        },
+        updateparent(variable) {
+            this.isCaptured = variable
         },
     }
     // mounted() {
@@ -182,14 +187,15 @@ export default {
                             <el-radio :label="1">Take a photo</el-radio>
                             <el-radio :label="0">Upload an image</el-radio>
         </el-radio-group>
-        <template v-if="formdata.camera === 1">
-            <div >
-                <Camera ref="camera"/>
-                <!-- <p>{{ getDTURL() }}</p> -->
-                <button @click="getImage"> Use this image</button>
-            </div>
-        </template>
+        
         <el-form ref="formRef" :model="formdata">
+            <template v-if="formdata.camera === 1">
+                <div class="camera">
+                    <Camera ref="camera" @eventname="updateparent"/>
+                    <br>
+                    <el-button v-if="this.isCaptured" type="primary" @click="getImage"> Use this image</el-button>
+                </div>
+            </template>
             <template v-if="formdata.camera === 0">
 
             <div class="upload-container">
@@ -224,7 +230,7 @@ export default {
                             <!-- <p>{{ vals }}</p> -->
                             <p>{{ keys[0].split("@")[0] }}</p>
                             <div v-if="getURL(keys[0])">
-                                <a v-bind:href="getURL(keys[0])">Product Link</a>
+                                <a v-bind:href="getURL(keys[0])" target="_blank">Product Link</a>
                             </div>
 
                         </li>
@@ -291,6 +297,11 @@ export default {
 </style>
 
 <style scoped>
+.camera {
+    width: 50%;
+    /* display: inline; */
+}
+
 main {
     box-sizing: border-box;
     padding: 70px 24px;
