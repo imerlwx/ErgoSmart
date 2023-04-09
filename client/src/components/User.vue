@@ -42,6 +42,32 @@ async function getResult(uploadFile) {
     };
     generated.value = true
 }
+function dataURLtoBlob(dataurl) {
+    var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+    while(n--){
+        u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], {type:mime});
+}
+async function getImage () {
+    console.log("aaaa")
+    const reader = new FileReader();
+    const f = dataURLtoBlob(localStorage.getItem('dataURL'));
+    reader.readAsDataURL(f);
+    reader.onload = async (re) => {
+        imgSrc.value = re.target.result;
+        const res = await getTrainResult(f)
+        const prob_ans = res.result
+        const prob = prob_ans.prob
+        const ans = prob_ans.res
+        formdata.result = prob
+        formdata.solution = ans
+        formdata.maxIndex = prob_ans.maxIndex
+        formdata.sortRes = prob_ans.sortRes
+    };
+    generated.value = true
+}
 
 function checkRate(rule, value, callback) {
     if (value < 1) {
@@ -73,6 +99,8 @@ function handleSubmit(formEl) {
         }
     })
 }
+
+
 </script>
 <script>
 export default {
@@ -89,7 +117,33 @@ export default {
         getDTURL() {
             const dtURL = localStorage.getItem('dtURL')
             return dtURL
-        }
+        },
+        getURL(urlString) { return urlString.split("@")[1] },
+        dataURLtoBlob(dataurl) {
+            var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+                bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+            while(n--){
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+            return new Blob([u8arr], {type:mime});
+        },
+        getImage () {
+            const reader = new FileReader();
+            const f = dataURLtoBlob(localStorage.getItem('dataURL'));
+            reader.readAsDataURL(f);
+            reader.onload = async (re) => {
+                imgSrc.value = re.target.result;
+                const res = await getTrainResult(f)
+                const prob_ans = res.result
+                const prob = prob_ans.prob
+                const ans = prob_ans.res
+                formdata.result = prob
+                formdata.solution = ans
+                formdata.maxIndex = prob_ans.maxIndex
+                formdata.sortRes = prob_ans.sortRes
+            };
+            generated.value = true
+        },
     }
     // mounted() {
     //     // setTimeout(() => {
@@ -106,13 +160,7 @@ export default {
 </script>
 <template>
     <main>
-        <div >
-                    <Camera ref="camera"/>
-                    <button :on-click="getResult" v-model:file-list="formdata.fileList">
-
-                    </button>
-                    <p>{{ getDTURL() }}</p>
-                </div>
+        
         <div>
             <h1>Welcome!</h1>
             <el-card>
@@ -134,11 +182,16 @@ export default {
                             <el-radio :label="1">Take a photo</el-radio>
                             <el-radio :label="0">Upload an image</el-radio>
         </el-radio-group>
-        
+        <template v-if="formdata.camera === 1">
+            <div >
+                <Camera ref="camera"/>
+                <!-- <p>{{ getDTURL() }}</p> -->
+                <button @click="getImage"> Use this image</button>
+            </div>
+        </template>
         <el-form ref="formRef" :model="formdata">
             <template v-if="formdata.camera === 0">
-        
-            
+
             <div class="upload-container">
                 <el-form-item prop="fileList" :rules="[{
                     required: true,
@@ -146,7 +199,6 @@ export default {
                 }]" class="upload">
                     <el-upload :show-file-list="false" class="upload-area" :auto-upload="false" :on-change="getResult"
                         v-model:file-list="formdata.fileList">
-                        <p>{{ formdata.fileList }}</p>
                         <img v-if="imgSrc" :src="imgSrc" />
                         <el-icon v-else class="avatar-uploader-icon">
                             <p>
@@ -157,9 +209,7 @@ export default {
                 </el-form-item>
             </div>
             </template>
-            <template v-if="formdata.camera === 1">
-                
-            </template>
+            
 
             <div class="result">
                 <h2 class="loading" v-if="imgSrc && !formdata.result">Generating Results...</h2>

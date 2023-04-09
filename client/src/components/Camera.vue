@@ -96,7 +96,7 @@
         // Stop the camera stream
         this.mediaStream.getTracks()[0].stop();
         this.dataURL = canvas.toDataURL();
-        localStorage.setItem('dtURL', this.dataURL);
+        localStorage.setItem('dataURL', this.dataURL);
       }
     }
   }

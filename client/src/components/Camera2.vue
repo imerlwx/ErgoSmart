@@ -29,6 +29,7 @@ export default {
             const blob = await this.imageCapture.takePhoto();
             // Do something with the captured photo blob, e.g. display it
             console.log(blob);
+            localStorage.setItem('blob', JSON.stringify(blob))
             // return blob;
         },
     },
