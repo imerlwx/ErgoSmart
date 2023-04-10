@@ -47,7 +47,7 @@ def writeJson(maxIndex, userChoice, filePath):
 def writeNewSol(prob_id, new_sol, filePath):
     with open(filePath, "r") as f:
         data = json.load(f)
-    if new_sol not in data[prob_id]:
+    if new_sol and new_sol not in data[prob_id]:
         data[prob_id][new_sol] = 0
         with open(filePath, "w") as f:
             json.dump(data, f)
@@ -141,7 +141,7 @@ def submitUnsatisfiedResult():
 def submitNewSol():
     data = request.get_json()
     DATA_DIR = getPath('../file.json')
-    writeNewSol(data["prob_id"], data["newSol"], DATA_DIR)
+    writeNewSol(data.get("prob_id"), data.get("newSol"), DATA_DIR)
     return {"code": 0}
 
 
