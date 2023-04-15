@@ -6,7 +6,6 @@ from util.index import random_filename
 from util.send import sendEmail
 from model.main import TrainingModel
 import asyncio
-from util.send import sendEmail
 import json
 import os
 
@@ -172,7 +171,7 @@ def updateTraining():
               password="humanaieecs598",
               subject="Training Result",
               receivers=[email],
-              content=data['result'],
+              content=data['result'] + data.get('newSol'),
               image_path=getImagePath(data['file']))
     return {"code": 0}
 

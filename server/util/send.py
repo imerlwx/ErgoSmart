@@ -11,7 +11,7 @@ def sendEmail(sender, password, subject, receivers, content, image_path=None):
     smtpPort = 587
     # Add the From: and To: headers at the start!
     # email information and content settings
-    message_text = MIMEText('<p>{}</p><img src="cid:image1">'.format(content), 'html')
+    message_text = MIMEText(content)
     message = MIMEMultipart('related')
     message['Subject'] = subject  # Email subject info
     message['From'] = sender      # Sender info

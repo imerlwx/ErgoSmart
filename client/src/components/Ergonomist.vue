@@ -18,7 +18,7 @@ export default {
     },
     methods: {
         saveResult(t, newSol) {
-            saveTrainingResult(t.id, t.file, t.result, t.uploader_id).then(res => {
+            saveTrainingResult(t.id, t.file, t.result, t.uploader_id, newSol[t.id]).then(res => {
                 if (res.code === 0) {
                     ElMessage({
                         type: 'success',

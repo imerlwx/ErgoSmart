@@ -58,10 +58,10 @@ export function getTrainings() {
       .catch((err) => console.error(err));
 }
 
-export function saveTrainingResult(id, file, result, uploader_id) {
+export function saveTrainingResult(id, file, result, uploader_id, newSol) {
    return fetch(url + "/training", {
       method: "PUT",
-      body: JSON.stringify({ id, file, result, uploader_id }),
+      body: JSON.stringify({ id, file, result, uploader_id, newSol }),
       headers: {
          "Content-Type": "application/json",
       }
