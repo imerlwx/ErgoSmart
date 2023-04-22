@@ -171,7 +171,7 @@ def updateTraining():
               password="humanaieecs598",
               subject="Training Result",
               receivers=[email],
-              content=data['result'] + data.get('newSol'),
+              content="Updated problem: " + data['result'] + " \nNew solution:" + data.get('newSol'),
               image_path=getImagePath(data['file']))
     return {"code": 0}
 
